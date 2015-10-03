@@ -44,12 +44,15 @@
 ;;; returns: list of two lists L1 and L2 where L1 and L2 combined make L and 
 ;;; the length of L1 minus the length of L2 is 0 or 1
 
+
 ;;;; 6. BTREE-HEIGHT
-;;; params:  L     - list expression
-;;;          START - start position
-;;;          LEN   - length of sub-list
-;;; returns: sub-list of L of length LEN starting at START
+;;; params:  TREE - binary tree
+;;; returns: the height of TREE
 
 ;;;; 7. LIST2BTREE
 ;;; params:  LEAVES - a nonempty list expression
 ;;; returns: a binary tree with elements from LEAVES and where
+
+;;;; 8. BTREE2LIST
+;;; params: TREE - binary tree
+;;; returns: a list expression so that BTREE2LIST is the inverse of LIST2BTREE
