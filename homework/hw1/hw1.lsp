@@ -43,16 +43,35 @@
 ;;; params:  L     - list expression
 ;;; returns: list of two lists L1 and L2 where L1 and L2 combined make L and 
 ;;; the length of L1 minus the length of L2 is 0 or 1
-
+(defun SPLIT-LIST (L)
+  (cond ((oddp (length L)) (list (SUB-LIST L 0 (/ (- (length L) 1) 2))
+                                 (SUB-LIST L (/ (- (length L) 1) 2) (- (length L) (/ (- (length L) 1) 2)))))
+        (t (list (SUB-LIST L 0 (/ (length L) 2))
+                 (SUB-LIST L (/ (length L) 2) (- (length L) (/ (length L) 2)))))))
 
 ;;;; 6. BTREE-HEIGHT
 ;;; params:  TREE - binary tree
 ;;; returns: the height of TREE
+(defun BTREE-HEIGHT (TREE)
+  (cond ((numberp TREE) 0)
+        ((= 2 (length TREE))
+         (let ((MAX-LEFT (BTREE-HEIGHT (car TREE)))
+               (MAX-RIGHT (BTREE-HEIGHT (cadr TREE))))
+           (cond ((> MAX-RIGHT MAX-LEFT) (+ 1 MAX-RIGHT))
+                 (t (+ 1 MAX-LEFT)))))))
 
 ;;;; 7. LIST2BTREE
 ;;; params:  LEAVES - a nonempty list expression
 ;;; returns: a binary tree with elements from LEAVES and where
+(defun LIST2BTREE (LEAVES)
+  (cond ((= 1 (length LEAVES)) (car LEAVES))
+        (t (let ((SPLIT (SPLIT-LIST LEAVES))) 
+             (list (LIST2BTREE (car SPLIT)) 
+                   (LIST2BTREE (cadr SPLIT)))))))
 
 ;;;; 8. BTREE2LIST
 ;;; params: TREE - binary tree
 ;;; returns: a list expression so that BTREE2LIST is the inverse of LIST2BTREE
+(defun BTREE2LIST (TREE)
+  (cond ((numberp TREE) (list TREE))
+        (t (append (BTREE2LIST (car TREE)) (BTREE2LIST (cadr TREE))))))
