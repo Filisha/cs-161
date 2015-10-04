@@ -14,6 +14,7 @@
 
 (cond
   ((and (equal (TREE-ORDER 3) '(3))
+        (equal (TREE-ORDER '((1 2 3) 4 (5 6 (7 8 9)))) '(1 2 3 4 5 6 7 8 9))
         (equal (TREE-ORDER '((1 2 3) 7 8)) '(1 2 3 7 8)))
    (print "All test cases passed for TREE-ORDER."))
   (t (print "Some test cases failed for TREE-ORDER!")))
