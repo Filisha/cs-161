@@ -42,7 +42,7 @@
 ;;;; 5. SPLIT-LIST
 ;;; params:  L     - list expression
 ;;; returns: list of two lists L1 and L2 where L1 and L2 combined make L and 
-;;; the length of L1 minus the length of L2 is 0 or 1
+;;; the length of L2 minus the length of L1 is 0 or 1
 (defun SPLIT-LIST (L)
   (cond ((oddp (length L)) (list (SUB-LIST L 0 (/ (- (length L) 1) 2))
                                  (SUB-LIST L (/ (- (length L) 1) 2) (- (length L) (/ (- (length L) 1) 2)))))
