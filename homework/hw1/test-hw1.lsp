@@ -58,6 +58,7 @@
         (equal (BTREE2LIST '(1 2)) '(1 2))
         (equal (BTREE2LIST '(1 (2 3))) '(1 2 3))
         (equal (BTREE2LIST '((1 2) (3 4))) '(1 2 3 4))
+        (equal (BTREE2LIST (LIST2BTREE '(1 2 3 4))) '(1 2 3 4))
         (equal (BTREE2LIST '((1 (2 3)) ((4 5) (6 7)))) '(1 2 3 4 5 6 7))
         (equal (BTREE2LIST '(((1 2) (3 4)) ((5 6) (7 8)))) '(1 2 3 4 5 6 7 8)))
    (print "All test cases passed for BTREE2LIST."))
