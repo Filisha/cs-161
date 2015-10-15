@@ -13,10 +13,11 @@
 ;;; returns:     a list of terminal nodes in order visited
 ;;; description: 
 (defun DFID (TREE LIMIT)
-  (append (DFID TREE (- LIMIT 1)) (DFS-LIMITED TREE 0 LIMIT)))
+  (cond ((equal LIMIT 0) (DFS-LIMITED TREE 0 LIMIT))
+        (t (append (DFID TREE (- LIMIT 1)) (DFS-LIMITED TREE 0 LIMIT)))))
 
 (defun DFS-LIMITED (TREE LEVEL LIMIT)
   (cond ((null TREE) nil)
         ((atom TREE) (list TREE))
         ((equal LEVEL LIMIT) nil)
-        (t (append (DFS-limited (car TREE) (+ LEVEL 1) LIMIT) (DFS (cdr TREE) (+ LEVEL 1) LIMIT)))))
+        (t (append (DFS-LIMITED (car TREE) (+ LEVEL 1) LIMIT) (DFS-LIMITED (cdr TREE) (+ LEVEL 1) LIMIT)))))
