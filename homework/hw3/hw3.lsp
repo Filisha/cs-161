@@ -157,10 +157,16 @@
   );end cond
   );end
 
+; getFirstBoxColumn (r col)
+; Helper function for getFirstBoxPosition
+
 (defun getFirstBoxColumn (r col)
   (cond ((null r) nil)
         (t (if (isBox (car r)) col
                (getFirstBoxColumn (cdr r) (+ col 1))))))
+
+; getFirstBoxColumn (r col)
+; Helper function for getFirstBoxPosition
 
 (defun getFirstBoxPosition (s firstRow)
   (cond ((null s) nil)
@@ -178,6 +184,123 @@
 ;
 (defun goal-test (s)
   (not (getFirstBoxPosition s 0)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Helper functions for next-states;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; get-square-in-row (state column)
+; Returns the square at the column in the row
+(defun get-square-in-row (s c)
+  (cond ((= c 0) (car s))
+        (t (get-square-in-row (cdr s) (- c 1)))))
+
+; get-square (state row column)
+; Returns the integer in the state at the row and column
+; specified.
+(defun get-square (s r c)
+  (cond ((null s) nil)
+        ((or (< r 0) (< c 0)) nil)
+        ((= r 0) (get-square-in-row (car s) c))
+        (t (get-square (cdr s) (- r 1) c))))
+
+; set-square-in-row (state column integer)
+; sets the square at the column in the row
+(defun set-square-in-row (s c v)
+  (cond ((= c 0) (append (list v) (cdr s)))
+        (t (append (list (car s)) (set-square-in-row (cdr s) (- c 1) v)))))
+
+; set-square (state row column integer)
+; Sets the integer in the state at the row and column
+; specified.
+(defun set-square (s r c v)
+  (cond ((= r 0) (append (list (set-square-in-row (car s) c v)) (cdr s)))
+        (t (append (list (car s)) (set-square (cdr s) (- r 1) c v)))))
+
+; get-square-x-away (state direction x keeper-row keeper-column)
+; Returns the square x away in a certain direction
+(defun get-square-x-away (s d x keeper-row keeper-col)
+  (cond ((= d 0) (get-square s (- keeper-row x) keeper-col))
+        ((= d 1) (get-square s keeper-row (+ keeper-col x)))
+        ((= d 2) (get-square s (+ keeper-row x) keeper-col))
+        ((= d 3) (get-square s keeper-row (- keeper-col x)))))
+
+; get-current-square (state direction keeper-row keeper-column)
+; Returns the square underneath the keeper
+(defun get-current-square (s d keeper-row keeper-col)
+  (let ((square-at-keeper (get-square-x-away s d 0 keeper-row keeper-col)))
+    (cond ((isKeeper square-at-keeper) blank)
+          ((isKeeperStar square-at-keeper) star))))
+
+; get-row-x-away (direction x keeper-row)
+; Returns the row x away in a certain direction
+(defun get-row-x-away (d x keeper-row)
+  (cond ((= d 0) (- keeper-row x))
+        ((= d 1) keeper-row)
+        ((= d 2) (+ keeper-row x))
+        ((= d 3) keeper-row)))
+
+; get-col-x-away (direction x keeper-column)
+; Returns the column x away in a certain direction
+(defun get-col-x-away (d x keeper-col)
+  (cond ((= d 0) keeper-col)
+        ((= d 1) (+ keeper-col x))
+        ((= d 2) keeper-col)
+        ((= d 3) (- keeper-col x))))
+
+; try-move (state direction)
+; Returns the state after the move if the move is valid
+; and NIL otherwise. The values for direction are as follows:
+; 0 - up
+; 1 - right
+; 2 - down
+; 3 - left
+(defun try-move (s d)
+  (let* ((keeper-row (cadr (getKeeperPosition s 0)))
+         (keeper-col (car (getKeeperPosition s 0)))
+         (square-current (get-current-square s d keeper-row keeper-col))
+         (square-one-away (get-square-x-away s d 1 keeper-row keeper-col))
+         (square-two-away (get-square-x-away s d 2 keeper-row keeper-col)))
+    (cond ((null square-one-away) nil)
+          ((isWall square-one-away) nil)
+          ((isBlank square-one-away) 
+             (set-square (set-square s (get-row-x-away d 1 keeper-row) 
+                                     (get-col-x-away d 1 keeper-col) keeper)
+                         keeper-row keeper-col square-current))
+          ((isStar square-one-away) 
+             (set-square (set-square s (get-row-x-away d 1 keeper-row) 
+                                     (get-col-x-away d 1 keeper-col) keeperstar)
+                         keeper-row keeper-col square-current))
+          ((isBox square-one-away)
+             (cond ((null square-two-away) nil)
+                   ((isBlank square-two-away)
+                    (set-square (set-square (set-square s (get-row-x-away d 2 keeper-row) 
+                                                        (get-col-x-away d 2 keeper-col) box)
+                                            (get-row-x-away d 1 keeper-row)
+                                            (get-col-x-away d 1 keeper-col) keeper)
+                                keeper-row keeper-col square-current))
+                   ((isStar square-two-away)
+                    (set-square (set-square (set-square s (get-row-x-away d 2 keeper-row)
+                                                        (get-col-x-away d 2 keeper-col) boxstar)
+                                            (get-row-x-away d 1 keeper-row)
+                                            (get-col-x-away d 1 keeper-col) keeper)
+                                keeper-row keeper-col square-current))
+                   ((isWall square-two-away) nil)))
+          ((isBoxStar square-one-away)
+             (cond ((null square-two-away) nil)
+                   ((isBlank square-two-away)
+                    (set-square (set-square (set-square s (get-row-x-away d 2 keeper-row)
+                                                        (get-col-x-away d 2 keeper-col) box)
+                                            (get-row-x-away d 1 keeper-row)
+                                            (get-col-x-away d 1 keeper-col) keeperstar)
+                                keeper-row keeper-col square-current))
+                   ((isStar square-two-away)
+                    (set-square (set-square (set-square s (get-row-x-away d 2 keeper-row)
+                                                        (get-col-x-away d 2 keeper-col) boxstar)
+                                            (get-row-x-away d 1 keeper-row)
+                                            (get-col-x-away d 1 keeper-col) keeperstar)
+                                keeper-row keeper-col square-current))
+                   ((isWall square-two-away) nil))))))
 
 ; EXERCISE: Modify this function to return the list of
 ; sucessor states of s.
@@ -198,15 +321,7 @@
 ; Any NIL result returned from try-move can be removed by cleanUpList.
 ;
 (defun next-states (s)
-  (let* ((pos (getKeeperPosition s 0))
-   (x (car pos))
-   (y (cadr pos))
-   ;x and y are now the coordinate of the keeper in s.
-   (result nil)
-   )
-    (cleanUpList result);end
-   );end let
-  );
+  (cleanUpList (list (try-move s 0) (try-move s 1) (try-move s 2) (try-move s 3))))
 
 ; EXERCISE: Modify this function to compute the trivial
 ; admissible heuristic.
@@ -214,11 +329,24 @@
 (defun h0 (s)
   0)
 
+(defun get-missplaced-boxes-in-row (row)
+  (cond ((null (car row)) 0)
+        ((isBox (car row)) (+ (get-missplaced-boxes-in-row (cdr row)) 1))
+        (t (get-missplaced-boxes-in-row (cdr row)))))
+
+(defun get-missplaced-boxes (s)
+  (cond ((null (car s)) 0)
+        (t (+ (get-missplaced-boxes-in-row (car s)) (get-missplaced-boxes (cdr s))))))
+
 ; EXERCISE: Modify this function to compute the
 ; number of misplaced boxes in s.
 ;
+; This heuristic IS admissable as it will at no point overestimate the number of moves
+; needed to complete the level. This is due to the fact that it is impossible to beat
+; a level when there are two boxes misplaced with just one move.
+;
 (defun h1 (s)
-  )
+  (get-missplaced-boxes s))
 
 ; EXERCISE: Change the name of this function to h<UID> where
 ; <UID> is your actual student ID number. Then, modify this
