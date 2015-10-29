@@ -261,46 +261,46 @@
          (square-current (get-current-square s d keeper-row keeper-col))
          (square-one-away (get-square-x-away s d 1 keeper-row keeper-col))
          (square-two-away (get-square-x-away s d 2 keeper-row keeper-col)))
-    (cond ((null square-one-away) nil)
-          ((isWall square-one-away) nil)
-          ((isBlank square-one-away) 
+    (cond ((null square-one-away) nil)   ; If there is nothing in the target square
+          ((isWall square-one-away) nil) ; If there is a wall in the target square
+          ((isBlank square-one-away)     ; If there is a blank in the target square
              (set-square (set-square s (get-row-x-away d 1 keeper-row) 
                                      (get-col-x-away d 1 keeper-col) keeper)
                          keeper-row keeper-col square-current))
-          ((isStar square-one-away) 
+          ((isStar square-one-away)      ; If there is a star in the target square
              (set-square (set-square s (get-row-x-away d 1 keeper-row) 
                                      (get-col-x-away d 1 keeper-col) keeperstar)
                          keeper-row keeper-col square-current))
-          ((isBox square-one-away)
+          ((isBox square-one-away)       ; If there is a box in the target square
              (cond ((null square-two-away) nil)
-                   ((isBlank square-two-away)
+                   ((isBlank square-two-away) ; If there is a blank after the target square
                     (set-square (set-square (set-square s (get-row-x-away d 2 keeper-row) 
                                                         (get-col-x-away d 2 keeper-col) box)
                                             (get-row-x-away d 1 keeper-row)
                                             (get-col-x-away d 1 keeper-col) keeper)
                                 keeper-row keeper-col square-current))
-                   ((isStar square-two-away)
+                   ((isStar square-two-away) ; If there is a star after the target square
                     (set-square (set-square (set-square s (get-row-x-away d 2 keeper-row)
                                                         (get-col-x-away d 2 keeper-col) boxstar)
                                             (get-row-x-away d 1 keeper-row)
                                             (get-col-x-away d 1 keeper-col) keeper)
                                 keeper-row keeper-col square-current))
-                   ((isWall square-two-away) nil)))
-          ((isBoxStar square-one-away)
+                   ((isWall square-two-away) nil))) ; If there is a wall after the target square
+          ((isBoxStar square-one-away)   ; If there is a boxstar in the target square
              (cond ((null square-two-away) nil)
-                   ((isBlank square-two-away)
+                   ((isBlank square-two-away) ; If there is a blank after the target square
                     (set-square (set-square (set-square s (get-row-x-away d 2 keeper-row)
                                                         (get-col-x-away d 2 keeper-col) box)
                                             (get-row-x-away d 1 keeper-row)
                                             (get-col-x-away d 1 keeper-col) keeperstar)
                                 keeper-row keeper-col square-current))
-                   ((isStar square-two-away)
+                   ((isStar square-two-away) ; If there is a star after the target square
                     (set-square (set-square (set-square s (get-row-x-away d 2 keeper-row)
                                                         (get-col-x-away d 2 keeper-col) boxstar)
                                             (get-row-x-away d 1 keeper-row)
                                             (get-col-x-away d 1 keeper-col) keeperstar)
                                 keeper-row keeper-col square-current))
-                   ((isWall square-two-away) nil))))))
+                   ((isWall square-two-away) nil)))))) ; If there is a wall after the target square
 
 ; EXERCISE: Modify this function to return the list of
 ; sucessor states of s.
@@ -329,11 +329,19 @@
 (defun h0 (s)
   0)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Helper functions for h1 ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; get-missplaced-boxes-in-row
+; Returns the number of missplaced boxes in a row
 (defun get-missplaced-boxes-in-row (row)
   (cond ((null (car row)) 0)
         ((isBox (car row)) (+ (get-missplaced-boxes-in-row (cdr row)) 1))
         (t (get-missplaced-boxes-in-row (cdr row)))))
 
+; get-missplaced-boxes (state)
+; Returns the number of missplaced boxes in a state
 (defun get-missplaced-boxes (s)
   (cond ((null (car s)) 0)
         (t (+ (get-missplaced-boxes-in-row (car s)) (get-missplaced-boxes (cdr s))))))
@@ -348,6 +356,52 @@
 (defun h1 (s)
   (get-missplaced-boxes s))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Helper functions for h804275355 ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; is-box-one-away (state row column)
+; Returns true if there is a box one move away and
+; false if there is no box one move away
+(defun is-box-one-away (s r c)
+  (let ((square-up    (or (get-square s (- r 1) c) -1))
+        (square-right (or (get-square s r (+ c 1)) -1))
+        (square-down  (or (get-square s (+ r 1) c) -1))
+        (square-left  (or (get-square s r (- c 1)) -1)))
+    (cond ((or (isBox square-up)
+               (isBox square-right)
+               (isBox square-down)
+               (isBox square-left)) t)
+          (t nil))))
+
+; find-closest-box (state row column)
+; Returns the closest box from a set of coordinates
+(defun find-closest-box (s r c)
+  (let ((cur-square (get-square s r c)))
+    (cond ((null cur-square) nil)
+          ((= cur-square 9) nil)
+          ((isWall cur-square) nil)
+          ((is-box-one-away s r c) 0)
+          (t (let* ((new-square (set-square s r c 9))
+                   (closest-up    (find-closest-box new-square (- r 1) c))
+                   (closest-right (find-closest-box new-square r (+ c 1)))
+                   (closest-down  (find-closest-box new-square (+ r 1) c))
+                   (closest-left  (find-closest-box new-square r (- c 1)))
+                   (distances (remove nil (list (if (not (null closest-up)) (+ closest-up 1))
+                      (if (not (null closest-right)) (+ closest-right 1))
+                      (if (not (null closest-down)) (+ closest-down 1))
+                      (if (not (null closest-left)) (+ closest-left 1))))))
+               (cond ((null distances) nil)
+                     (t (apply 'min distances))))))))
+
+; from-keeper-to-box (state)
+; Returns the minimum number of moves needed to move the keeper
+; from its current position to the closest box in the state
+(defun from-keeper-to-box (s)
+  (let ((keeper-row (cadr (getKeeperPosition s 0)))
+       (keeper-col (car (getKeeperPosition s 0))))
+    (find-closest-box s keeper-row keeper-col)))
+
 ; EXERCISE: Change the name of this function to h<UID> where
 ; <UID> is your actual student ID number. Then, modify this
 ; function to compute an admissible heuristic value of s.
@@ -357,8 +411,15 @@
 ; The Lisp 'time' function can be used to measure the
 ; running time of a function call.
 ;
-(defun hUID (s)
-  )
+; My heuristic function combines h1 with a function that computes
+; how many moves it takes to move the keeper to the closest box.
+; This accounts for boxes being close to their stars, but the keeper
+; being very far away from the boxes.
+;
+(defun h804275355 (s)
+  (let ((keeper-box-distance (from-keeper-to-box s)))
+    (cond ((null keeper-box-distance) (get-missplaced-boxes s))
+          (t (+ (get-missplaced-boxes s) keeper-box-distance)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
