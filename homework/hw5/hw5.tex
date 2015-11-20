@@ -1,0 +1,254 @@
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{enumitem}
+
+\newenvironment{blockquote}{%
+  \par%
+  \medskip
+  \leftskip=2em%
+  \noindent\ignorespaces}{%
+  \par\medskip}
+
+\begin{document}
+ 
+\title{Homework 5}
+\author{Jacob Nisnevich \textemdash \hspace{2px} 804375355 \\ \\
+CS 161}
+ 
+\maketitle
+ 
+\begin{enumerate}
+	\renewcommand\labelenumi{\bfseries\theenumi.}
+	\item \textbf{(20 points)} Use truth tables (worlds) to show that the following pairs of sentences are equivalent: 
+
+	\begin{itemize}
+		\item P $\Rightarrow$ $\neg$ Q, Q $\Rightarrow$ $\neg$ P
+
+		\begin{table}[!ht]
+			\centering
+			\begin{tabular}{| c | c || c | c | c | c |}
+				\hline
+				P & Q & $\neg$ P $\lor$ $\neg$ Q & \textbf{P $\Rightarrow$ $\neg$ Q} & $\neg$ Q $\lor$ $\neg$ P & \textbf{Q $\Rightarrow$ $\neg$ P} \\
+				\hline
+				T & T & F & \textbf{F} & F & \textbf{F} \\
+				T & F & T & \textbf{T} & T & \textbf{T} \\
+				F & T & T & \textbf{T} & T & \textbf{T} \\
+				F & F & T & \textbf{T} & T & \textbf{T} \\
+				\hline
+			\end{tabular}
+		\end{table}
+
+		\item P $\Leftrightarrow$ $\neg$ Q, ((P $\land$ $\neg$ Q) $\lor$ ($\neg$ P $\land$ Q))
+
+		\begin{table}[!ht]
+			\centering
+			\begin{tabular}{| c | c || c | c | c | c |}
+				\hline
+				P & Q & \textbf{P $\Leftrightarrow$ $\neg$ Q} & P $\land$ $\neg$ Q & $\neg$ P $\land$ Q & \textbf{(P $\land$ $\neg$ Q) $\lor$ ($\neg$ P $\land$ Q)} \\
+				\hline
+				T & T & \textbf{F} & F & F & \textbf{F} \\
+				T & F & \textbf{T} & T & F & \textbf{T} \\
+				F & T & \textbf{T} & F & T & \textbf{T} \\
+				F & F & \textbf{F} & F & F & \textbf{F} \\
+				\hline
+			\end{tabular}
+		\end{table}
+	\end{itemize}
+
+	\item \textbf{(30 points)} Consider the following sentences and decide for each whether it is valid, unsatisfiable, or neither:
+
+	\begin{itemize}
+		\item (Smoke $\Rightarrow$ Fire) $\Rightarrow$ ($\neg$ Smoke $\Rightarrow$ $\neg$ Fire)
+
+		\begin{table}[!ht]
+			\centering
+			\begin{tabular}{| c | c || c | c | c |}
+				\hline
+				Smoke & Fire & $\neg$ Smoke $\lor$ Fire & Smoke $\lor$ $\neg$ Fire & $\neg$ ($\neg$ Smoke $\lor$ Fire) $\lor$ (Smoke $\lor$ $\neg$ Fire) \\
+				\hline
+				T & T & T & T & T \\
+				T & F & F & T & T \\
+				F & T & T & F & F \\
+				F & F & T & T & T \\
+				\hline
+			\end{tabular}
+		\end{table}
+
+		This sentence is neither valid nor unsatisfiable. \\\\
+
+		\item (Smoke $\Rightarrow$ Fire) $\Rightarrow$ ((Smoke $\lor$ Heat) $\Rightarrow$ Fire)
+
+		\begin{table}[!ht]
+			\centering
+			\begin{tabular}{| c | c | c || c | c | c |}
+				\hline
+				Smoke & Fire & Heat & $\neg$ Smoke $\lor$ Fire & Smoke $\lor$ Heat & $\neg$ (Smoke $\lor$ Heat) $\lor$ Fire \\
+				\hline
+				T & T & T & T & T & T \\
+				T & F & T & F & T & F \\
+				F & T & T & T & T & T \\
+				F & F & T & T & T & F \\
+				T & T & F & T & T & T \\
+				T & F & F & F & T & F \\
+				F & T & F & T & F & T \\
+				F & F & F & T & F & T \\
+				\hline
+			\end{tabular}
+			\vspace*{-0.2in}
+		\end{table}
+
+		\begin{table}[!ht]
+			\centering
+			\begin{tabular}{| c |}
+				\hline
+				$\neg$ ($\neg$ Smoke $\lor$ Fire) $\lor$ ($\neg$ (Smoke $\lor$ Heat) $\lor$ Fire) \\
+				\hline
+				T \\
+				T \\
+				T \\
+				F \\
+				T \\
+				T \\
+				T \\
+				T \\
+				\hline
+			\end{tabular}
+		\end{table}
+
+		This sentence is neither valid nor unsatisfiable.
+
+		\item ((Smoke $\land$ Heat) $\Rightarrow$ Fire) $\Leftrightarrow$ ((Smoke $\Rightarrow$ Fire) $\lor$ (Heat $\Rightarrow$ Fire))
+
+		\begin{table}[!ht]
+			\centering
+			\makebox[\textwidth][c]{
+			\begin{tabular}{| c | c | c || c | c | c | c |}
+				\hline
+				Smoke & 
+				Fire & 
+				Heat &
+				Smoke $\land$ Heat &
+				$\neg$ (Smoke $\land$ Heat) $\lor$ Fire &
+				$\neg$ Smoke $\lor$ Fire &
+				$\neg$ Heat $\lor$ Fire \\
+				\hline
+				T & T & T & T & T & T & T \\
+				T & F & T & T & F & F & F \\
+				F & T & T & F & T & T & T \\
+				F & F & T & F & T & T & F \\
+				T & T & F & F & T & T & T \\
+				T & F & F & F & T & F & T \\
+				F & T & F & F & T & T & T \\
+				F & F & F & F & T & T & T \\
+				\hline
+			\end{tabular}}
+			\vspace*{-0.2in}
+		\end{table}
+
+		\begin{table}[!ht]
+			\centering
+			\makebox[\textwidth][c]{
+			\begin{tabular}{| c | c |}
+				\hline
+				($\neg$ Smoke $\lor$ Fire) $\lor$ ($\neg$ Heat $\lor$ Fire) &
+				((Smoke $\land$ Heat) $\Rightarrow$ Fire) $\Leftrightarrow$ ((Smoke $\Rightarrow$ Fire) $\lor$ (Heat $\Rightarrow$ Fire)) \\
+				\hline
+				T & T \\
+				F & T \\
+				T & T \\
+				T & T \\
+				T & T \\
+				T & T \\
+				T & T \\
+				T & T \\
+				\hline
+			\end{tabular}}
+		\end{table}
+
+		This sentence is valid.
+	\end{itemize}
+
+	\item \textbf{(50 points)} Consider the following:
+
+	\textit{If the unicorn is mythical, then it is immortal, but if it is not mythical, then it is a mortal mammal. If the unicorn is either immortal or a mammal, then it is horned. The unicorn is magical if it is horned}
+
+	\begin{enumerate}
+		\item Represent the above information using a propositional logic knowledge base (set of sentences in propositional logic). \\
+
+		\begin{enumerate}[label=\arabic*.]
+			\item Mythical $\Rightarrow$ $\neg$ Mortal
+			\item $\neg$ Mythical $\Rightarrow$ (Mortal $\land$ Mammal)
+			\item ($\neg$ Mortal $\lor$ Mammal) $\Rightarrow$ Horned
+			\item Horned $\Rightarrow$ Magical \\
+		\end{enumerate}
+
+		\item Convert the knowledge base into CNF. \\
+
+		($\neg$ Mythical $\lor$ $\neg$ Mortal) $\land$ (Mythical $\lor$ Mortal) $\land$ (Mythical $\lor$ Mammal) $\land$ (Mortal $\lor$ Horned) $\land$ ($\neg$ Mammal $\lor$ Horned) $\land$ ($\neg$ Horned $\lor$ Magical) \\
+
+		\item Can you use the knowledge base to prove that the unicorn is mythical? How about magical? Horned?\\
+
+		\textbf{Mythical?}\\
+
+		\begin{tabular}{l l r}
+			1. & $\neg$ Mythical $\lor$ $\neg$ Mortal & \\
+			2a. & Mythical $\lor$ Mortal & \\
+			2b. & Mythical $\lor$ Mammal & \\
+			3a. & Mortal $\lor$ Horned & \\
+			3b. & $\neg$ Mammal $\lor$ Horned & \\
+			4. & $\neg$ Horned $\lor$ Magical & \\
+			5. & $\neg$ Mythical & \\
+			\hline
+			6. & Mortal & 2a, 5 \\
+			7. & Mammal & 2b, 5 \\
+			8. & Horned & 3b, 7 \\
+			9. & Magical & 4, 8 \\
+		\end{tabular}\\\\
+
+		We cannot prove that the unicorn is mythical. \\\\\\\\\\\\
+
+		\textbf{Magical?}\\
+
+		\begin{tabular}{l l r}
+			1. & $\neg$ Mythical $\lor$ $\neg$ Mortal & \\
+			2a. & Mythical $\lor$ Mortal & \\
+			2b. & Mythical $\lor$ Mammal & \\
+			3a. & Mortal $\lor$ Horned & \\
+			3b. & $\neg$ Mammal $\lor$ Horned & \\
+			4. & $\neg$ Horned $\lor$ Magical & \\
+			5. & $\neg$ Magical & \\
+			\hline
+			6. & $\neg$ Horned & 4, 5 \\
+			7. & Mortal & 3a, 6 \\
+			8. & $\neg$ Mythical & 1, 7 \\
+			9. & Mammal & 2b, 8 \\
+			10. & $\neg$ Mammal & 3b, 6 \\
+		\end{tabular}\\\\
+
+		As there is a contradiction in the resolution, we can prove that the unicorn is magical. \\
+
+		\textbf{Horned?}\\
+
+		\begin{tabular}{l l r}
+			1. & $\neg$ Mythical $\lor$ $\neg$ Mortal & \\
+			2a. & Mythical $\lor$ Mortal & \\
+			2b. & Mythical $\lor$ Mammal & \\
+			3a. & Mortal $\lor$ Horned & \\
+			3b. & $\neg$ Mammal $\lor$ Horned & \\
+			4. & $\neg$ Horned $\lor$ Magical & \\
+			5. & $\neg$ Horned & \\
+			\hline
+			6. & Mortal & 3a, 5 \\
+			7. & $\neg$ Mythical & 1, 6 \\
+			8. & Mammal & 2b, 7 \\
+			9. & $\neg$ Mammal & 3b, 5 \\
+		\end{tabular}\\\\
+
+		As there is a contradiction in the resolution, we can prove that the unicorn is horned.
+	\end{enumerate}
+
+\end{enumerate}
+
+ 
+\end{document}

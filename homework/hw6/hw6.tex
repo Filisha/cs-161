@@ -1,0 +1,276 @@
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{booktabs}
+
+\newenvironment{blockquote}{%
+  \par%
+  \medskip
+  \leftskip=2em%
+  \noindent\ignorespaces}{%
+  \par\medskip}
+
+\begin{document}
+ 
+\title{Homework 6}
+\author{Jacob Nisnevich \textemdash \hspace{2px} 804375355 \\ \\
+CS 161}
+ 
+\maketitle
+ 
+\begin{enumerate}
+	\item For each pair of atomic sentences, give the most general unifier if it exists:
+
+		\begin{enumerate}
+			\item $P(A, B, B), P(x, y, z)$
+
+			$\sigma = \{x \backslash A, y \backslash B, z \backslash B\}$
+
+			\item $Q(y, G(A, B)), Q(G(x, x), y)$
+
+			Does not exist
+
+			\item $R(x, A, z), R(B, y, z)$
+
+			$\sigma = \{x \backslash B, y \backslash A\}$
+
+			\item $\text{Older}(\text{Father}(y), y), \text{Older}(\text{Father}(x), \text{John})$
+
+			$\sigma = \{x \backslash \text{John}, y \backslash \text{John}\}$
+
+			\item $\text{Knows}(\text{Father}(y), y), \text{Knows}(x, x)$
+
+			Does not exist
+		\end{enumerate}
+
+	\item Translate the following sentences into formulas in first-order logic:
+
+		\begin{enumerate}
+			\item There exists at most one $x$ such that $P(x)$
+
+			$\forall x \forall y ((P(x) \land P(y)) \Rightarrow x = y)$
+
+			\item There exists exactly one $x$ such that $P(x)$
+
+			$\exists x (P(x) \land \forall y (P(y) \Rightarrow x = y))$
+
+			\item There exists at least two $x$ such that $P(x)$
+
+			$\exists x \exists y (P(x) \land P(y) \land \neg (x = y))$
+
+			\item There exists at most two $x$ such that $P(x)$
+
+			$\forall x \forall y \forall z ((P(x) \land P(y) \land P(z)) \Rightarrow (x = y \lor y = z \lor x = z))$
+
+			\item There exists exactly two $x$ such that $P(x)$
+
+			$\exists x \exists y (P(x) \land P(y) \land x \neq y \land \forall z (P(z) \Rightarrow z = x \lor z = y))$
+		\end{enumerate}
+
+	\item For each knowledge base, determine whether it is satisfiable. Justify your answer intuitively.
+
+		\begin{enumerate}
+			\item $P(A), (\exists x) (\neg P(x))$
+
+			This knowledge base is satisfiable. It is only known that $P(x)$ returns true for $A$.
+
+			\item $P(A), (\forall x) (\neg P(x))$
+
+			This knowledge base is not satisfiable. As it is given that $P(x)$ is true for $A$, it is impossible for $P(x)$ to always be false.
+
+			\item $(\forall x)(\exists y)(P(x, y)), (\forall x)(\neg P(x, x)))$
+
+			This knowledge base is satisfiable. This is true if $x$ and $y$ are different in $P(x, y)$.
+
+			\item $(\forall x)(P(x) \Rightarrow (\exists x)(P(x)))$
+
+			This knowledge base is satisfiable. This is trivially true as the validity of $P(x)$ for all $x$ implies that there is some $P(x)$.
+
+			\item $(\forall x)(P(x) \Rightarrow (\forall x)(P(x)))$
+
+			This knowledge base is satisfiable. This works in the case that $x$ satisfies $P(x)$ and everyone else satisfies $P(x)$.
+
+		\end{enumerate}
+
+	\item Consider the following sentences:
+
+		\begin{itemize}
+			\item John likes all kinds of food.
+			\item Apples are food.
+			\item Chicken is food.
+			\item Anything anyone eats and isn't killed by is food.
+			\item If you are killed by something, you are not alive.
+			\item Bill eats peanuts and is still alive. *
+			\item Sue eats everything Bill eats.
+		\end{itemize}
+
+		\begin{enumerate}
+			\item Translate these sentences into formulas in first-order logic.
+
+			\begin{itemize}
+				\item $\forall x (\text{Food}(x) \Rightarrow \text{Likes}(\text{John}, x))$
+				\item $\text{Food}(\text{Apples})$
+				\item $\text{Food}(\text{Chicken})$
+				\item $\forall x \forall y ((\text{Eats}(x, y) \land \neg \text{\text{Kills}}(y, x)) \Rightarrow \text{Food}(y))$
+				\item $\forall x \forall y (\text{Kills}(y, x) \Rightarrow \neg \text{Alive}(x))$
+				\item $\text{Eats}(\text{Bill}, \text{Peanuts}) \land \text{Alive}(\text{Bill})$
+				\item $\forall x (\text{Eats}(\text{Bill}, x) \Rightarrow \text{Eats}(\text{Sue}, x)$
+			\end{itemize}
+
+			\item Convert the formulas of part (a) into CNF (also called clausal form).
+
+			\begin{enumerate}[label=\arabic*.]
+				\item Eliminate $\Rightarrow$ and $\Leftrightarrow$
+					\begin{itemize}
+						\item $\forall x (\neg \text{Food}(x) \lor \text{Likes}(\text{John}, x))$
+						\item $\text{Food}(\text{Apples})$
+						\item $\text{Food}(\text{Chicken})$
+						\item $\forall x \forall y (\neg (\text{Eats}(x, y) \land \neg \text{\text{Kills}}(y, x)) \lor \text{Food}(y))$
+						\item $\forall x \forall y (\neg \text{Kills}(y, x) \lor \neg \text{Alive}(x))$
+						\item $\text{Eats}(\text{Bill}, \text{Peanuts}) \land \text{Alive}(\text{Bill})$
+						\item $\forall x (\neg \text{Eats}(\text{Bill}, x) \lor \text{Eats}(\text{Sue}, x)$
+					\end{itemize}
+				\item Move $\neg$ inwards
+					\begin{itemize}
+						\item $\forall x (\neg \text{Food}(x) \lor \text{Likes}(\text{John}, x))$
+						\item $\text{Food}(\text{Apples})$
+						\item $\text{Food}(\text{Chicken})$
+						\item $\forall x \forall y (\neg \text{Eats}(x, y) \lor  \text{\text{Kills}}(y, x) \lor \text{Food}(y))$
+						\item $\forall x \forall y (\neg \text{Kills}(y, x) \lor \neg \text{Alive}(x))$
+						\item $\text{Eats}(\text{Bill}, \text{Peanuts}) \land \text{Alive}(\text{Bill})$
+						\item $\forall x (\neg \text{Eats}(\text{Bill}, x) \lor \text{Eats}(\text{Sue}, x)$
+					\end{itemize}
+				\item Standardize variables
+					\begin{itemize}
+						\item $\forall a (\neg \text{Food}(a) \lor \text{Likes}(\text{John}, a))$
+						\item $\text{Food}(\text{Apples})$
+						\item $\text{Food}(\text{Chicken})$
+						\item $\forall b \forall c (\neg \text{Eats}(b, c) \lor  \text{\text{Kills}}(c, b) \lor \text{Food}(c))$
+						\item $\forall d \forall e (\neg \text{Kills}(e, d) \lor \neg \text{Alive}(d))$
+						\item $\text{Eats}(\text{Bill}, \text{Peanuts}) \land \text{Alive}(\text{Bill})$
+						\item $\forall f (\neg \text{Eats}(\text{Bill}, f) \lor \text{Eats}(\text{Sue}, f)$
+					\end{itemize}
+				\item Skolemization
+					\begin{itemize}
+						\item $\forall a (\neg \text{Food}(a) \lor \text{Likes}(\text{John}, a))$
+						\item $\text{Food}(\text{Apples})$
+						\item $\text{Food}(\text{Chicken})$
+						\item $\forall b \forall c (\neg \text{Eats}(b, c) \lor  \text{\text{Kills}}(c, b) \lor \text{Food}(c))$
+						\item $\forall d \forall e (\neg \text{Kills}(e, d) \lor \neg \text{Alive}(d))$
+						\item $\text{Eats}(\text{Bill}, \text{Peanuts}) \land \text{Alive}(\text{Bill})$
+						\item $\forall f (\neg \text{Eats}(\text{Bill}, f) \lor \text{Eats}(\text{Sue}, f)$
+					\end{itemize}
+				\item Get rid of universal quantifiers
+					\begin{itemize}
+						\item $\neg \text{Food}(a) \lor \text{Likes}(\text{John}, a)$
+						\item $\text{Food}(\text{Apples})$
+						\item $\text{Food}(\text{Chicken})$
+						\item $\neg \text{Eats}(b, c) \lor  \text{\text{Kills}}(c, b) \lor \text{Food}(c)$
+						\item $\neg \text{Kills}(e, d) \lor \neg \text{Alive}(d)$
+						\item $\text{Eats}(\text{Bill}, \text{Peanuts}) \land \text{Alive}(\text{Bill})$
+						\item $\neg \text{Eats}(\text{Bill}, f) \lor \text{Eats}(\text{Sue}, f)$
+					\end{itemize}
+				\item Distribute $\lor$ and $\land$
+					\begin{itemize}
+						\item $\neg \text{Food}(a) \lor \text{Likes}(\text{John}, a)$
+						\item $\text{Food}(\text{Apples})$
+						\item $\text{Food}(\text{Chicken})$
+						\item $\neg \text{Eats}(b, c) \lor  \text{\text{Kills}}(c, b) \lor \text{Food}(c)$
+						\item $\neg \text{Kills}(e, d) \lor \neg \text{Alive}(d)$
+						\item $\text{Eats}(\text{Bill}, \text{Peanuts}) \land \text{Alive}(\text{Bill})$
+						\item $\neg \text{Eats}(\text{Bill}, f) \lor \text{Eats}(\text{Sue}, f)$
+					\end{itemize}
+			\end{enumerate}
+
+			\item Prove that John likes peanuts using resolution.
+
+				\begin{tabular}{ l l r }
+					1. & $\neg \text{Food}(a) \lor \text{Likes}(\text{John}, a)$ & \\
+					2. & $\text{Food}(\text{Apples})$ & \\
+					3. & $\text{Food}(\text{Chicken})$ & \\
+					4. & $\neg \text{Eats}(b, c) \lor  \text{\text{Kills}}(c, b) \lor \text{Food}(c)$ & \\
+					5. & $\neg \text{Kills}(e, d) \lor \neg \text{Alive}(d)$ & \\
+					6. & $\text{Eats}(\text{Bill}, \text{Peanuts})$ & \\
+					7. & $\text{Alive}(\text{Bill})$ & \\
+					8. & $\neg \text{Eats}(\text{Bill}, f) \lor \text{Eats}(\text{Sue}, f)$ & \\
+					9. & $\neg \text{Likes}(\text{John}, \text{Peanuts})$ & \\
+					\toprule
+					10. & $\neg \text{Food}(\text{Peanuts})$ & 1, 9 \\
+					11. & $\neg \text{Kills}(e, \text{Bill})$ & 5, 7 \\
+					12. & $\neg \text{Eats}(\text{Bill}, c) \lor \text{Food}(c)$ & 4, 11 \\
+					13. & $\text{Food}(\text{Peanuts})$ & 6, 12 \\
+				\end{tabular}
+
+				\textbf{Contradiction} between statements 10 and 13. Therefore John likes peanuts.
+
+			\item Use resolution to answer the question "What food does Sue eat?"
+
+				\begin{tabular}{ l l r }
+					1. & $\neg \text{Food}(a) \lor \text{Likes}(\text{John}, a)$ & \\
+					2. & $\text{Food}(\text{Apples})$ & \\
+					3. & $\text{Food}(\text{Chicken})$ & \\
+					4. & $\neg \text{Eats}(b, c) \lor  \text{\text{Kills}}(c, b) \lor \text{Food}(c)$ & \\
+					5. & $\neg \text{Kills}(e, d) \lor \neg \text{Alive}(d)$ & \\
+					6. & $\text{Eats}(\text{Bill}, \text{Peanuts})$ & \\
+					7. & $\text{Alive}(\text{Bill})$ & \\
+					8. & $\neg \text{Eats}(\text{Bill}, f) \lor \text{Eats}(\text{Sue}, f)$ & \\
+					9. & $\neg \text{Eats}(\text{Sue}, \text{Peanuts})$ & \\
+					\toprule
+					10. & $\text{Eats}(\text{Sue}, \text{Peanuts})$ & 6, 8 \\
+				\end{tabular}
+
+				\textbf{Contradiction} between statements 10 and 13. Therefore Sue eats peanuts.
+
+			\item Use resolution to answer (d) if, instead of the axiom marked with an asterisk above we had:
+
+				\begin{itemize}
+					\item If you don't eat you die.
+					\item If you die, you are not alive.
+					\item Bill is alive.
+				\end{itemize}
+
+				Converted to first-order logic:
+
+				\begin{itemize}
+					\item $\forall x \forall y (\neg \text{Eats}(x, y) \Rightarrow \text{Dies}(x))$
+					\item $\forall x (\text{Dies}(x) \Rightarrow \neg \text{Alive}(x))$
+					\item $\text{Alive}(\text{Bill})$
+				\end{itemize}
+
+				Converted to CNF:
+
+				\begin{itemize}
+					\item $\text{Eats}(g, h) \lor \text{Dies}(g)$
+					\item $\neg \text{Dies}(i) \lor \neg \text{Alive}(i)$
+					\item $\text{Alive}(\text{Bill})$
+				\end{itemize}
+
+				New knowledge base:
+
+				\begin{tabular}{ l l r }
+					1. & $\neg \text{Food}(a) \lor \text{Likes}(\text{John}, a)$ & \\
+					2. & $\text{Food}(\text{Apples})$ & \\
+					3. & $\text{Food}(\text{Chicken})$ & \\
+					4. & $\neg \text{Eats}(b, c) \lor  \text{\text{Kills}}(c, b) \lor \text{Food}(c)$ & \\
+					5. & $\neg \text{Kills}(e, d) \lor \neg \text{Alive}(d)$ & \\
+					8. & $\neg \text{Eats}(\text{Bill}, f) \lor \text{Eats}(\text{Sue}, f)$ & \\
+					9. & $\text{Eats}(g, h) \lor \text{Dies}(g)$ & \\
+					10. & $\neg \text{Dies}(i) \lor \neg \text{Alive}(i)$ & \\
+					11. & $\text{Alive}(\text{Bill})$ & \\				
+					12. & $\neg \text{Eats}(\text{Sue}, \text{Apples})$ & \\
+					\toprule
+					13. & $\text{Dies}(\text{Sue})$ & 9, 12 \\
+					14. & $\neg \text{Alive}(\text{Sue})$ & 10, 13 \\
+					15. & $\neg \text{Kills}(e, \text{Bill})$ & 5, 11 \\
+					16. & $\neg \text{Eats}(\text{Bill}, \text{Apples})$ & 8, 12 \\
+					17. & $\text{Dies}(\text{Bill})$ & 9, 16 \\
+					18. & $\neg \text{Alive}(\text{Bill})$ & 10, 17 \\
+				\end{tabular}
+
+				\textbf{Contradiction} between statements 11 and 18. Therefore Sue eats apples.
+		\end{enumerate}
+\end{enumerate}
+
+\end{document}

@@ -105,6 +105,6 @@
         (t (append '(0) (create-zeros-list n (+ count 1))))))
 
 ; queens (n)
-; Primary function for solving N-QUEENS
+; Primary function for solving N-QUEENS, calls queens-dfs that executes DFS
 (defun queens (n)
   (queens-dfs (create-zeros-list n 0) n))
