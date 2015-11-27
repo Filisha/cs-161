@@ -1,0 +1,189 @@
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amsthm,amssymb}
+\usepackage{units}
+
+\newenvironment{blockquote}{%
+  \par%
+  \medskip
+  \leftskip=2em%
+  \noindent\ignorespaces}{%
+  \par\medskip}
+
+\renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
+
+\begin{document}
+ 
+\title{Homework 7}
+\author{Jacob Nisnevich \textemdash \hspace{2px} 804375355 \\ \\
+CS 161}
+ 
+\maketitle
+ 
+\begin{enumerate}
+	\item Prove the following:
+
+	\begin{enumerate}
+		\item Generalized product rule: $Pr(A, B | K) = Pr(A | B, K) Pr(B | K)$.
+
+		\begin{proof}
+		$Pr(A, B | K) = Pr(A | B, K) Pr(B | K)$ \\
+		$\cfrac{Pr(A, B, K)}{Pr(K)} = \cfrac{Pr(A, B, K)}{Pr(B, K)} \cdot \cfrac{Pr(B, K)}{Pr(K)}$ \\
+		$\cfrac{Pr(A, B, K)}{Pr(K)} = Pr(A, B, K) / Pr(K)$
+		\end{proof}
+
+		\item Generalized Bayes’ rule: $Pr(A | B, K) = Pr(B | A, K)Pr(A | K)/Pr(B | K)$.
+
+		\begin{proof}
+		$Pr(A | B, K) = Pr(B | A, K)Pr(A | K)/Pr(B | K)$ \\
+		$\cfrac{Pr(A,B|K)}{Pr(B|K)} = \cfrac{Pr(B,A,K)}{Pr(A,K)} \cdot \cfrac{Pr(A,K)}{Pr(K)} \cdot \cfrac{Pr(B,K)}{Pr(K)}$ \\
+		$\cfrac{Pr(A,B|K)}{Pr(B|K)} = \cfrac{Pr(B,A,K)}{Pr(K)} \cdot \cfrac{Pr(B,K)}{Pr(K)}$ \\
+		$\cfrac{Pr(A,B,K)}{Pr(K)} \cdot \cfrac{Pr(B,K)}{Pr(K)} = \cfrac{Pr(B,A,K)}{Pr(K)} \cdot \cfrac{Pr(B,K)}{Pr(K)}$ \\
+		$\cfrac{Pr(A,B,K)}{Pr(K)} = \cfrac{Pr(B,A,K)}{Pr(K)}$ \\
+		$\cfrac{Pr(A,B,K)}{Pr(K)} = \cfrac{Pr(A,B,K)}{Pr(K)}$ \\
+		\end{proof}
+
+	\end{enumerate}
+
+	\item An oil well may be drilled on Mr. Arthur’s farm in Atlanta. Based on what has happened to similar farms, we judge the probability of oil being present to be 0.5, the probability of only natural gas being present to be 0.2, and the probability of neither being present to be 0.3. If oil is present, a geological test will give a positive result with probability 0.9; if only natural gas is present, it will give a positive result with probability 0.3; and if neither are present, the test will be positive with probability 0.1. Suppose the test comes back positive. What is the probability that oil is present?\\
+
+	Given probabilities: \\
+
+	\begin{align*}
+	Pr(Oil) &= 0.5 \\
+	Pr(Gas) &= 0.2 \\
+	Pr(Neither) &= 0.3 \\
+	Pr(Positive | Oil) &= 0.9 \\
+	Pr(Positive | Gas) &= 0.3 \\
+	Pr(Positive | Neither) &= 0.1 \\
+	\end{align*}
+
+	We can show: 
+
+	\begin{align*}
+	Pr(Positive) &= Pr(Positive | Oil) \cdot Pr(Oil) \\
+	&+ Pr(Positive | Gas) \cdot Pr(Gas) \\
+	&+ Pr(Positive | Neither) \cdot Pr(Neither) \\
+	&= 0.9 \cdot 0.5 + 0.3 \cdot 0.2 + 0.1 \cdot 0.3 \\
+	&= 0.54\\
+	Pr(Oil | Positive) &= \cfrac{Pr(Oil) Pr(Positive | Oil)}{P(Positive)} \\
+	&= \cfrac{0.5 \cdot 0.9}{0.54}\\
+	&= 0.833333...
+	\end{align*}
+
+	\item Mr. Arthur picked up an object at random from the above set. We want to compute the probabilities of the following events:
+
+	\begin{itemize}
+		\item $\alpha_1$: the object is yellow;
+		\item $\alpha_2$: the object is square;
+		\item $\alpha_3$: if the object is one or yellow, then it is also square.
+	\end{itemize}
+
+	Construct the joint probability distribution of this problem. Use it to compute the above probabilities by explicitly identifying the worlds at which each $\alpha_i$ holds. Identify two sets of sentences $\alpha$, $\beta$, $\gamma$ such that $\alpha$ is independent of $\beta$ given $\gamma$ with respect to the constructed distribution. \\
+
+	$Pr(\alpha_1) = Pr(Yellow) = \cfrac{9}{13}$ \\
+	$Pr(\alpha_2) = Pr(Square) = \cfrac{8}{13}$ \\
+	$Pr(\alpha_3) = Pr(Square | One \lor Yellow) = \cfrac{Pr(Square \land (One \lor Yellow))}{Pr(One \lor Black)} = \cfrac{7}{11}$\\
+
+	The resulting joint probability distribution table is as follows: \\
+
+	\begin{tabular}{c || c | c || c | c }
+	 & \multicolumn{2}{c ||}{$Yellow$} & \multicolumn{2}{c}{$\neg Yellow$} \\
+	\hline
+	 & $Square$ & $\neg Square$ & $Square$ & $\neg Square$ \\
+	\hline
+	$One$ & $\cfrac{2}{13}$ & $\cfrac{1}{13}$ & $\cfrac{1}{13}$ & $\cfrac{1}{13}$ \\[0.4cm]
+	\hline
+	$\neg One$ & $\cfrac{4}{13}$ & $\cfrac{2}{13}$ & $\cfrac{1}{13}$ & $\cfrac{1}{13}$ \\
+	\end{tabular} \\
+
+	Using this table:
+
+	\begin{itemize}
+		\item $\alpha_1$: all worlds in the first two columns
+		\item $\alpha_2$: all worlds in the first and third columns
+		\item $\alpha_3$: all worlds in the first and third columns that are in the first row or the first two columns divided by all cells except the last two
+	\end{itemize}
+
+	Therefore:
+
+	$Pr(\alpha_1) = \cfrac{2}{13} + \cfrac{4}{13} + \cfrac{1}{13} + \cfrac{2}{13} = \cfrac{9}{13}$ \\
+	$Pr(\alpha_2) = \cfrac{2}{13} + \cfrac{4}{13} + \cfrac{1}{13} + \cfrac{1}{13} = \cfrac{8}{13}$ \\
+	$Pr(\alpha_3) = \cfrac{\cfrac{2}{13} + \cfrac{4}{13} + \cfrac{1}{13}}{\cfrac{2}{13} + \cfrac{4}{13} + \cfrac{1}{13} + \cfrac{2}{13} + \cfrac{1}{13} + \cfrac{1}{13}} = \cfrac{7}{11}$ \\
+
+
+	Two sets of sentences that satisify the condition above are:
+
+	\begin{tabular}{c | c | c}
+	$\alpha$ & $\beta$ & $\gamma$ \\
+	\hline
+	$Square$ & $One$ & $\neg Yellow$ \\
+	$Square$ & $\neg One$ & $\neg Yellow$ \\
+	\end{tabular}
+
+	\item Consider the DAG in Figure 1:
+
+	\begin{enumerate}
+		\item List the Markovian assumptions asserted by the DAG.
+
+		\begin{itemize}
+			\item $I(A, \varnothing, \{B, E\})$
+			\item $I(B, \varnothing, \{A, C\})$
+			\item $I(C, \{A\}, \{A, B, D, E\})$
+			\item $I(D, \{A, B\}, \{A, B, C, E\})$
+			\item $I(E, \{B\}, \{A, B, C, D\})$
+			\item $I(F, \{C, D\}, \{A, B, C, D, E\})$
+			\item $I(G, \{F\}, \{A, B, C, D, E, F, H\})$
+			\item $I(H, \{E, F\}, \{A, C, B, D, E, F, G\})$
+		\end{itemize}
+
+		\item True or false? Why?
+
+		\begin{itemize}
+			\item $d\_separated(A, BH, E)$
+
+			False, $A$ and $E$ converge on $H$ through $F$.
+
+			\item $d\_separated(G, D, E)$
+
+			True, $D$ blocks the only diverging path between $G$ and $E$ at $B$
+
+			\item $d\_separated(AB, F, GH)$
+
+			False, the removal of $F$ blocks the sequential path from $A$ and $B$ to $G$ but through $B \rightarrow E \rightarrow H$ there still exists a sequential path.
+		\end{itemize}
+
+		\item Express $Pr(a, b, c, d, e, f, g, h)$ in factored form using the chain rule for Bayesian networks
+
+		\begin{align*}
+		Pr(a, b, c, d, e, f, g, h) &= Pr(a | b, c, d, e, f, g, h) \cdot Pr(a | b, c, d, e, f, g, h) \\
+		& \cdot Pr(c | d, e, f, g, h) \cdot Pr(d | e, f, g, h) \cdot Pr(e | f, g, h) \\
+		& \cdot Pr(f | g, h) \cdot Pr(g | h) \cdot Pr(h) \\
+		\end{align*}
+
+		\item Compute $Pr(A = 0, B = 0)$ and $Pr(E = 1 | A = 1)$ using the CPTs below. Justify your answers. \\
+
+		As $A$ and $B$ are independent: \\
+
+		$Pr(A = 0, B = 0) = Pr(A = 0) \cdot Pr(B = 0) = 0.8 \cdot 0.3 = 0.24$ \\\\
+
+		As $A$ and $E$ are independent:
+
+		\begin{align*}
+		Pr(E = 1 | A = 1) &= \cfrac{Pr(E = 1, A = 1)}{Pr(A = 1)} \\
+		&= \cfrac{Pr(E = 1) \cdot Pr(A = 1)}{Pr(A = 1)} \\ 
+		&= Pr(E = 1) \\ 
+		&= Pr(E = 1, B = 0) + Pr(E = 1, B = 1) \\ 
+		&= Pr(E = 1 | B = 0) \cdot Pr(B = 0) + Pr(E = 1 | B = 1) \cdot Pr(B = 1) \\
+		&= 0.9 \cdot 0.3 + 0.1 \cdot 0.7 \\
+		&= 0.27 + 0.07 \\ 
+		&= 0.34
+		\end{align*}
+
+	\end{enumerate}
+\end{enumerate}
+
+\end{document}
