@@ -1,0 +1,118 @@
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amsthm,amssymb}
+\usepackage{units}
+
+\newenvironment{blockquote}{%
+  \par%
+  \medskip
+  \leftskip=2em%
+  \noindent\ignorespaces}{%
+  \par\medskip}
+
+\renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
+
+\begin{document}
+ 
+\title{Homework 8}
+\author{Jacob Nisnevich \textemdash \hspace{2px} 804375355 \\ \\
+CS 161}
+ 
+\maketitle
+ 
+\begin{enumerate}
+	\item Disease and Diagnosis
+
+	\begin{itemize}
+		\item See \textbf{test.net}.
+		\item Using the sensitivity analysis I constrained $Pr(\text{Disease} = \text{Positive} | \text{Test} = \text{Positive}) \geq 0.3$. SamIam gave the following suggested values $Pr(\text{Test} = \text{Positive} | \text{Disease} = \text{Negative}) \leq 0.002386$ and $Pr(\text{Disease} = \text{Positive}) \geq 0.008322$.
+	\end{itemize}
+
+	\item Sambot
+
+	\begin{enumerate}
+		\item Variables and values:
+
+		\begin{itemize}
+			\item ExpectingGuests: Yes, No, N/A
+			\item FamilyHome: Yes, No, N/A
+			\item SoundSensor: On, Off, N/A
+			\item LightSensor: On, Off, N/A
+			\item HearableBarking: Yes, No, N/A
+			\item Battery: OK, Dead, N/A
+			\item SoundSensorHealth: OK, Broken, N/A
+			\item LightSensorHealth: OK, Broken, N/A
+			\item DogBarking: Yes, No, N/A
+			\item DogOutside: Yes, No, N/A
+			\item OutdoorLight: On, Off, N/A
+			\item DogBowelTrouble: Yes, No, N/A
+		\end{itemize}
+
+		\item Causal structure:
+
+		\begin{itemize}
+			\item ExpectingGuests $\Rightarrow$ FamilyHome
+			\item ExpectingGuests $\Rightarrow$ OutdoorLight
+			\item FamilyHome $\Rightarrow$ OutdoorLight
+			\item FamilyHome $\Rightarrow$ DogOutside
+			\item SoundSensorHealth $\Rightarrow$ SoundSensor
+			\item LightSensorHealth $\Rightarrow$ LightSensor
+			\item Battery $\Rightarrow$ SoundSensor
+			\item Battery $\Rightarrow$ LightSensor
+			\item HearableBarking $\Rightarrow$ SoundSensor
+			\item DogOutside $\Rightarrow$ DogBarking
+			\item DogBarking $\Rightarrow$ HearableBarking
+			\item OutdoorLight $\Rightarrow$ LightSensor
+			\item DogBowelTrouble $\Rightarrow$ DogOutside
+		\end{itemize}
+
+		\item EM Learning results (achieved by creating all the necessary nodes and states and implmenting the causal structure, followed by using the EM algorithm with the given data found in \textbf{sambot.dat}):
+
+		\begin{itemize}
+			\item I found the most likely instantiation of values y setting the LightSensor value to "On" and the SoundSensor value to "Off" and then running an MPE Computation on the resulting network. The result was as follows:
+
+			\begin{itemize}
+				\item Battery: OK
+				\item DogBarking: No
+				\item DogBowelTrouble: Yes
+				\item DogOutside: Yes
+				\item ExpectingGuests: No
+				\item FamilyHome: No
+				\item HearableBarking: No
+				\item LightSensorHealth: OK
+				\item OutdoorLight: On
+				\item SoundSensorHealth: OK
+			\end{itemize}
+
+			With the following probability values:
+
+			\begin{itemize}
+				\item $P(MPE,e) = 0.1526$
+				\item $P(MPE|e) = 0.3571$
+			\end{itemize}
+
+			\item I found the most likely instantiation of values y setting the FamilyHome value to "Yes" and the ExpectingGuests value to "No" and then running an MAP Computation on the resulting network. The result was as follows:
+
+			\begin{itemize}
+				\item LightSensor: Off
+				\item SoundSensor: Off
+			\end{itemize}
+
+			With the following probability values:
+
+			\begin{itemize}
+				\item $P(MAP,e) = 0.0673$
+				\item $P(MAP|e) = 0.3552$
+			\end{itemize}
+
+			\item We can set \textbf{Z} to the set of variables \{Battery, FamilyHome\}. This will be sufficient to indiciate that LightSensor and SoundSesnor are independent by the divergence of both variables into the sensors by d-separation.
+
+			\item The network constructed is a multiply-connected network.
+		\end{itemize}
+	\end{enumerate}
+\end{enumerate}
+
+\end{document}
